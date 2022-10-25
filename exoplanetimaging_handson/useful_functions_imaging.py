@@ -72,7 +72,7 @@ def explore_slices(data, cmap="gray", vmin=None, vmax=None, title=''):
     def display_slice(plane=0):
         fig, ax = plt.subplots(figsize=(8, 8), dpi=80)
 
-        show_plane(ax, data[plane], title=title + f' number {plane}', cmap=cmap, vmin=vmin, vmax=vmax)
+        show_plane(ax, remove_mean_2d(data[plane]), title=title + f' number {plane}', cmap=cmap, vmin=vmin, vmax=vmax)
 
         plt.show()
 
@@ -80,7 +80,7 @@ def explore_slices(data, cmap="gray", vmin=None, vmax=None, title=''):
 
 
 def show_psf(PSF, vmin=None, vmax=None, title=None):
-
+    PSF = remove_mean_2d(PSF)
     if vmin is None:
         vmin = np.nanmin(PSF)
     if vmax is None:
@@ -98,6 +98,9 @@ def show_psf(PSF, vmin=None, vmax=None, title=None):
     plt.show()
     plt.close()
 
+
+def remove_mean_2d(image):
+    return image-np.nanmean(image)
 
 def quick_crop(image, dimout):
     """ --------------------------------------------------
