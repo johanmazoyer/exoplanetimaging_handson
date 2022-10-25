@@ -195,9 +195,9 @@ def subtract_classical_adi_median(datacube_init, output_dir):
         datacube_corr[i] = datacube_init[i] - psf
 
     print("End cADI")
-    fits.writeto(output_dir + "datacube_SPHERE_classical_adi_sub.fits",
-                 datacube_corr,
-                 overwrite=True)
+    # fits.writeto(output_dir + "datacube_SPHERE_classical_adi_sub.fits",
+    #              datacube_corr,
+    #              overwrite=True)
 
     return datacube_corr
 
@@ -211,9 +211,9 @@ def derotate_and_mean_classical_adi(datacube_init, parang, output_dir):
                                                  reshape=False)
 
     reduc_adi = np.nanmean(datacube_SPHERE_corr, axis=0)
-    fits.writeto(output_dir + "reduc_classical_adi.fits",
-                 reduc_adi,
-                 overwrite=True)
+    # fits.writeto(output_dir + "reduc_classical_adi.fits",
+    #              reduc_adi,
+    #              overwrite=True)
 
     return reduc_adi
 
