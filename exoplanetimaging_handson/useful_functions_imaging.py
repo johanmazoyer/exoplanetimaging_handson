@@ -25,9 +25,7 @@ import pyklip.parallelized as parallelized
 def binning_datacube(init_cube, sizebin=20):
     size_init = init_cube.shape
 
-    binned_cube = np.zeros(
-        (size_init[0] // sizebin, size_init[1], size_init[2]),
-        dtype=init_cube.dtype)
+    binned_cube = np.zeros((size_init[0] // sizebin, size_init[1], size_init[2]), dtype=init_cube.dtype)
 
     for i in range(size_init[0] // sizebin):
         subcube = init_cube[i * sizebin:(i + 1) * sizebin]
@@ -39,13 +37,10 @@ def binning_datacube(init_cube, sizebin=20):
 def binning_parangs(init_parangs, sizebin=20):
     size_init = init_parangs.shape
 
-    binned_parangs = np.zeros(size_init[0] // sizebin,
-                              dtype=init_parangs.dtype)
+    binned_parangs = np.zeros(size_init[0] // sizebin, dtype=init_parangs.dtype)
 
     for i in range(size_init[0] // sizebin):
-        binned_parangs[i] = np.mean(init_parangs[i * sizebin:(i + 1) *
-                                                 sizebin],
-                                    axis=0)
+        binned_parangs[i] = np.mean(init_parangs[i * sizebin:(i + 1) * sizebin], axis=0)
 
     return binned_parangs
 
@@ -77,12 +72,7 @@ def explore_slices(data, cmap="gray", vmin=None, vmax=None, title=''):
     def display_slice(plane=0):
         fig, ax = plt.subplots(figsize=(8, 8), dpi=80)
 
-        show_plane(ax,
-                   data[plane],
-                   title=title + f' number {plane}',
-                   cmap=cmap,
-                   vmin=vmin,
-                   vmax=vmax)
+        show_plane(ax, data[plane], title=title + f' number {plane}', cmap=cmap, vmin=vmin, vmax=vmax)
 
         plt.show()
 
@@ -128,10 +118,8 @@ def quick_crop(image, dimout):
 
 
     -------------------------------------------------- """
-    return image[int((image.shape[0] - dimout) /
-                     2):int((image.shape[0] + dimout) / 2),
-                 int((image.shape[1] - dimout) /
-                     2):int((image.shape[1] + dimout) / 2)]
+    return image[int((image.shape[0] - dimout) / 2):int((image.shape[0] + dimout) / 2),
+                 int((image.shape[1] - dimout) / 2):int((image.shape[1] + dimout) / 2)]
 
 
 def quick_crop3d(image, dimout):
@@ -149,13 +137,14 @@ def quick_crop3d(image, dimout):
 ######################################################
 
 
-def simple_pca_already_centered(datacube_SPHERE_binned, centers_images,
-                                parangs_binned, PCA_components, output_dir = '', output_prefix = ''):
+def simple_pca_already_centered(datacube_SPHERE_binned,
+                                centers_images,
+                                parangs_binned,
+                                PCA_components,
+                                output_dir='',
+                                output_prefix=''):
 
-    dataset = Instrument.GenericData(datacube_SPHERE_binned,
-                                     centers_images,
-                                     parangs=parangs_binned,
-                                     wvs=None)
+    dataset = Instrument.GenericData(datacube_SPHERE_binned, centers_images, parangs=parangs_binned, wvs=None)
     # dataset.IWA = 12
     # dataset.OWA = 75
 
@@ -177,12 +166,12 @@ def simple_pca_already_centered(datacube_SPHERE_binned, centers_images,
                               verbose=False)
 
     print("end PCA")
-    reduc_PCA = np.flip(fits.getdata(os.path.join(output_dir , output_prefix +"reduc_PCA-KLmodes-all.fits"),axis=1))
+    reduc_PCA = np.flip(fits.getdata(os.path.join(output_dir, output_prefix + "reduc_PCA-KLmodes-all.fits"), axis=1))
 
     return reduc_PCA
 
 
-def subtract_classical_adi_median(datacube_init, output_dir = ''):
+def subtract_classical_adi_median(datacube_init, output_dir=''):
 
     print("Start cADI")
     datacube_corr = np.zeros(datacube_init.shape)
@@ -202,13 +191,11 @@ def subtract_classical_adi_median(datacube_init, output_dir = ''):
     return datacube_corr
 
 
-def derotate_and_mean_classical_adi(datacube_init, parang, output_dir = ''):
+def derotate_and_mean_classical_adi(datacube_init, parang, output_dir=''):
 
     datacube_SPHERE_corr = datacube_init * 0.
     for i in range(len(parang)):
-        datacube_SPHERE_corr[i] = ndimage.rotate(datacube_init[i],
-                                                 -parang[i],
-                                                 reshape=False)
+        datacube_SPHERE_corr[i] = ndimage.rotate(datacube_init[i], -parang[i], reshape=False)
 
     reduc_adi = np.nanmean(datacube_SPHERE_corr, axis=0)
     # fits.writeto(output_dir + "reduc_classical_adi.fits",
@@ -251,9 +238,7 @@ def roundpupil(dim_pp, prad, xcenter, ycenter):
     
     -------------------------------------------------- """
 
-    xx, yy = np.meshgrid(
-        np.arange(dim_pp) - xcenter,
-        np.arange(dim_pp) - ycenter)
+    xx, yy = np.meshgrid(np.arange(dim_pp) - xcenter, np.arange(dim_pp) - ycenter)
     rr = np.hypot(yy, xx)
     pupilnormal = np.zeros((dim_pp, dim_pp))
     pupilnormal[rr <= prad] = 1.0
@@ -261,15 +246,7 @@ def roundpupil(dim_pp, prad, xcenter, ycenter):
     return pupilnormal
 
 
-def Gaussian2d(xy,
-               amplitude,
-               sigma_x,
-               sigma_y,
-               xo,
-               yo,
-               theta,
-               h,
-               flatten=True):
+def Gaussian2d(xy, amplitude, sigma_x, sigma_y, xo, yo, theta, h, flatten=True):
     """ --------------------------------------------------
     Create a gaussian in 2D.
     
@@ -313,28 +290,21 @@ def Gaussian2d(xy,
     y = xy[1]
     xo = float(xo)
     yo = float(yo)
-    a = (np.cos(theta)**2) / (2 * sigma_x**2) + (np.sin(theta)**
-                                                 2) / (2 * sigma_y**2)
-    b = -(np.sin(2 * theta)) / (4 * sigma_x**2) + (np.sin(
-        2 * theta)) / (4 * sigma_y**2)
-    c = (np.sin(theta)**2) / (2 * sigma_x**2) + (np.cos(theta)**
-                                                 2) / (2 * sigma_y**2)
-    g = (amplitude * np.exp(-(a * ((x - xo)**2) + 2 * b * (x - xo) *
-                              (y - yo) + c * ((y - yo)**2))) + h)
+    a = (np.cos(theta)**2) / (2 * sigma_x**2) + (np.sin(theta)**2) / (2 * sigma_y**2)
+    b = -(np.sin(2 * theta)) / (4 * sigma_x**2) + (np.sin(2 * theta)) / (4 * sigma_y**2)
+    c = (np.sin(theta)**2) / (2 * sigma_x**2) + (np.cos(theta)**2) / (2 * sigma_y**2)
+    g = (amplitude * np.exp(-(a * ((x - xo)**2) + 2 * b * (x - xo) * (y - yo) + c * ((y - yo)**2))) + h)
     if flatten == True:
         g = g.flatten()
     return g
 
 
 def run_gauss_fit(image, prior_x, prior_y):
-    print("starting least square with prior position ({0},{1})".format(
-        prior_x, prior_y))
+    print("starting least square with prior position ({0},{1})".format(prior_x, prior_y))
 
     dim_im = image.shape[0]
 
-    aperture_noise = roundpupil(dim_im, 10,
-                                prior_x - 2 * (prior_x - dim_im / 2),
-                                prior_y - 2 * (prior_y - dim_im / 2))
+    aperture_noise = roundpupil(dim_im, 10, prior_x - 2 * (prior_x - dim_im / 2), prior_y - 2 * (prior_y - dim_im / 2))
     noise = np.nanstd(image[np.where(aperture_noise == 1)])
 
     aperture_planet = roundpupil(dim_im, 10, prior_x, prior_y)
@@ -360,11 +330,7 @@ def run_gauss_fit(image, prior_x, prior_y):
     # asd
 
     try:
-        popt, pcov = opt.curve_fit(Gaussian2d,
-                                   xy,
-                                   data.flatten(),
-                                   sigma=noise.flatten(),
-                                   p0=initial_guess)
+        popt, pcov = opt.curve_fit(Gaussian2d, xy, data.flatten(), sigma=noise.flatten(), p0=initial_guess)
         perr = np.sqrt(np.diag(pcov))
     except RuntimeError:
         print("Error - curve_fit failed")
@@ -372,15 +338,7 @@ def run_gauss_fit(image, prior_x, prior_y):
     position_in_pix = (popt[4], popt[3])
     position_in_pix_err = (perr[4], perr[3])
 
-    bestGaussfit = Gaussian2d(xy,
-                              popt[0],
-                              popt[1],
-                              popt[2],
-                              popt[3],
-                              popt[4],
-                              popt[5],
-                              popt[6],
-                              flatten=False)
+    bestGaussfit = Gaussian2d(xy, popt[0], popt[1], popt[2], popt[3], popt[4], popt[5], popt[6], flatten=False)
     residuals = data - bestGaussfit
     # fits.writeto("/Users/jmazoyer/Desktop/data.fits", data, overwrite=True)
     # fits.writeto("/Users/jmazoyer/Desktop/bestGaussfit.fits", bestGaussfit, overwrite=True)
@@ -410,8 +368,7 @@ def write_orbit_in_cvs(filename, rows):
 
 def third_kepler_law(sma, star_mass):
 
-    per = np.sqrt(
-        (4 * (np.pi**2) * (sma * u.AU)**3) / (consts.G * (star_mass * u.Msun)))
+    per = np.sqrt((4 * (np.pi**2) * (sma * u.AU)**3) / (consts.G * (star_mass * u.Msun)))
     period = per.to(u.year).value
 
     return period
@@ -419,10 +376,11 @@ def third_kepler_law(sma, star_mass):
 
 def initialize_walkers(theta_init, num_temps, num_walkers):
 
-    curr_pos = np.zeros((num_temps,num_walkers,len(theta_init)))
+    curr_pos = np.zeros((num_temps, num_walkers, len(theta_init)))
 
     for i in range(len(theta_init)):
-        curr_pos[:,:,i] = np.random.uniform(0.999*theta_init[i], 1.001*theta_init[i], size = (num_temps,num_walkers))
-
+        curr_pos[:, :, i] = np.random.uniform(0.999 * theta_init[i],
+                                              1.001 * theta_init[i],
+                                              size=(num_temps, num_walkers))
 
     return curr_pos
