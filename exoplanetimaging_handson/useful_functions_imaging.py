@@ -148,7 +148,7 @@ def quick_crop3d(image, dimout):
 
 
 def simple_pca_already_centered(datacube_SPHERE_binned, centers_images,
-                                parangs_binned, PCA_components, output_dir):
+                                parangs_binned, PCA_components, output_dir = ''):
 
     dataset = Instrument.GenericData(datacube_SPHERE_binned,
                                      centers_images,
@@ -182,7 +182,7 @@ def simple_pca_already_centered(datacube_SPHERE_binned, centers_images,
     return reduc_PCA
 
 
-def subtract_classical_adi_median(datacube_init, output_dir):
+def subtract_classical_adi_median(datacube_init, output_dir = ''):
 
     print("Start cADI")
     datacube_corr = np.zeros(datacube_init.shape)
@@ -202,7 +202,7 @@ def subtract_classical_adi_median(datacube_init, output_dir):
     return datacube_corr
 
 
-def derotate_and_mean_classical_adi(datacube_init, parang, output_dir):
+def derotate_and_mean_classical_adi(datacube_init, parang, output_dir = ''):
 
     datacube_SPHERE_corr = datacube_init * 0.
     for i in range(len(parang)):
