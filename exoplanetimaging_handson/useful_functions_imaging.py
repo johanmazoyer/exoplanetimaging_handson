@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
@@ -148,7 +150,7 @@ def quick_crop3d(image, dimout):
 
 
 def simple_pca_already_centered(datacube_SPHERE_binned, centers_images,
-                                parangs_binned, PCA_components, output_dir = ''):
+                                parangs_binned, PCA_components, output_dir = '', output_prefix = ''):
 
     dataset = Instrument.GenericData(datacube_SPHERE_binned,
                                      centers_images,
@@ -164,7 +166,7 @@ def simple_pca_already_centered(datacube_SPHERE_binned, centers_images,
 
     parallelized.klip_dataset(dataset,
                               outputdir=output_dir,
-                              fileprefix="reduc_PCA",
+                              fileprefix=output_prefix + "reduc_PCA",
                               numbasis=PCA_components,
                               annuli=1,
                               subsections=1,
@@ -175,9 +177,7 @@ def simple_pca_already_centered(datacube_SPHERE_binned, centers_images,
                               verbose=False)
 
     print("end PCA")
-    reduc_PCA = np.flip(fits.getdata(output_dir +
-                                     "reduc_PCA-KLmodes-all.fits"),
-                        axis=1)
+    reduc_PCA = np.flip(fits.getdata(os.path.join(output_dir , output_prefix +"reduc_PCA-KLmodes-all.fits"),axis=1))
 
     return reduc_PCA
 
