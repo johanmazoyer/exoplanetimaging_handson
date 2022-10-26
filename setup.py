@@ -29,6 +29,4 @@ setup(
         'Programming Language :: Python :: 3.8, 3.9, 3.10',
     ],
     keywords='Exoplanets imaging high-contrast coronagraphy',
-    install_requires=[
-        'astropy', 'matplotlib', 'numpy','scipy','ipywidgets'
-    ])
+    install_requires=[ 'numpy'])
