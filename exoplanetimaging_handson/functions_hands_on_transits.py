@@ -88,7 +88,7 @@ def build_model(x,y,yerr,u_s,t0s,periods,rps,a_ps, texp,b_ps=0.62, mask=None, st
         sigma_rot = pm.InverseGamma(
             "sigma_rot", **pmx.estimate_inverse_gamma_parameters(1, 5)
         )
-        # Rotation period is 3.3 days, from Lomb Scargle
+        # Rotation period is 200 days, from Lomb Scargle
         log_prot = pm.Normal("log_prot", mu=np.log(200.), sd=0.02)
         prot = pm.Deterministic("prot", tt.exp(log_prot))
         log_Q0 = pm.Normal("log_Q0", mu=0, sd=2)
@@ -136,9 +136,9 @@ def build_model(x,y,yerr,u_s,t0s,periods,rps,a_ps, texp,b_ps=0.62, mask=None, st
 
         map_soln = start
 
-        map_soln = pmx.optimize(
-            start=map_soln, vars=[sigma_rot, f, prot, log_Q0, log_dQ]
-        )
+        #map_soln = pmx.optimize(
+        #    start=map_soln, vars=[sigma_rot, f, prot, log_Q0, log_dQ]
+        #)
         map_soln = pmx.optimize(
             start=map_soln,
             vars=[
@@ -229,7 +229,7 @@ def run_sampling(model,map_estimate):
         with model:
             trace_with_gp = pm.sample(
                 tune=200,
-                draws=200,
+                draws=100,
                 start=map_estimate,
                 # Parallel sampling runs poorly or crashes on macos
                 cores=1 if platform.system() == "Darwin" else 2,
@@ -295,7 +295,7 @@ def plot_best_fit(x, y, yerr, soln, mask=None):
     ax.legend(fontsize=10)
     ax.set_ylabel("Relative flux")
     ax.set_xlabel("Time to mid-transit (days)")
-    
+
 
 
 
@@ -303,7 +303,7 @@ def output_table(trace_with_gp,var_names):
 
     table = az.summary(trace_with_gp, var_names=var_names,round_to=5)
     return table
-    
+
 def acknowledgment():
 
     with pm.Model() as model:
@@ -314,13 +314,11 @@ def acknowledgment():
 
         txt, bib = xo.citations.get_citations_for_model()
     print(txt)
-    
-    
+
+
 def synthetic_error(file):
     filename = file+'.csv' #nom du fichier d'entrée, c'est à dire de la courbe de transit
     df_lc = pd.read_csv(filename,sep=',')
     df_lc = df_lc.sort_values(by="Time (days)")
     df_lc['Flux error'] = np.random.uniform(low=0.0001, high=0.0006,size=len(df_lc))
     df_lc.to_csv(file+'_bis.csv',sep=',',index=None)
-
-
