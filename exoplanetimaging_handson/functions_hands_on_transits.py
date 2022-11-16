@@ -220,7 +220,7 @@ def plot_light_curve(x, y, yerr, soln, mask=None):
 
     fig.tight_layout()
 
-def run_sampling(model,map_estimate):
+def run_sampling(model,map_estimate,tune=200,draws=100,cores=2):
 
     # Change this to "1" if you wish to run it.
     RUN_THE_SAMPLING = 1
@@ -228,8 +228,8 @@ def run_sampling(model,map_estimate):
     if RUN_THE_SAMPLING:
         with model:
             trace_with_gp = pm.sample(
-                tune=200,
-                draws=100,
+                tune=tune,
+                draws=draws,
                 start=map_estimate,
                 # Parallel sampling runs poorly or crashes on macos
                 cores=1 if platform.system() == "Darwin" else 2,
