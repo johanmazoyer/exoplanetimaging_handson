@@ -16,7 +16,7 @@ import matplotlib as mpl
 import platform
 import arviz as az
 
-def build_model(x,y,yerr,u_s,t0s,periods,rps,a_ps, texp,b_ps=0.62, mask=None, start=None):
+def build_model(x,y,yerr,u_s,t0s,periods,rps,a_ps, texp,b_ps=0.62, P_rot=200, mask=None, start=None):
     nb_planet = 1
     planets_str = "b"
     t0s = np.array([t0s])
@@ -89,7 +89,7 @@ def build_model(x,y,yerr,u_s,t0s,periods,rps,a_ps, texp,b_ps=0.62, mask=None, st
             "sigma_rot", **pmx.estimate_inverse_gamma_parameters(1, 5)
         )
         # Rotation period is 200 days, from Lomb Scargle
-        log_prot = pm.Normal("log_prot", mu=np.log(200.), sd=0.02)
+        log_prot = pm.Normal("log_prot", mu=np.log(P_rot), sd=0.02)
         prot = pm.Deterministic("prot", tt.exp(log_prot))
         log_Q0 = pm.Normal("log_Q0", mu=0, sd=2)
         log_dQ = pm.Normal("log_dQ", mu=0, sd=2)
@@ -136,9 +136,9 @@ def build_model(x,y,yerr,u_s,t0s,periods,rps,a_ps, texp,b_ps=0.62, mask=None, st
 
         map_soln = start
 
-        #map_soln = pmx.optimize(
-        #    start=map_soln, vars=[sigma_rot, f, prot, log_Q0, log_dQ]
-        #)
+        map_soln = pmx.optimize(
+            start=map_soln, vars=[sigma_rot, f, prot, log_Q0, log_dQ]
+        )
         map_soln = pmx.optimize(
             start=map_soln,
             vars=[
@@ -177,11 +177,11 @@ def plot_light_curve(x, y, yerr, soln, mask=None):
         fmt='o',
         color="k",
         label="data",
-        zorder=42,
+        zorder=4,
     )
     gp_mod = soln["gp_pred"] + soln["mean"]
     ax.plot(
-        x[mask], gp_mod+1, color="C2", label="model without transit", zorder=41, lw=0.5
+        x[mask], gp_mod+1, color="C2", label="model without transit", zorder=5, lw=0.5
     )
     ax.legend(fontsize=10)
     ax.set_ylabel("$f$")
@@ -194,7 +194,7 @@ def plot_light_curve(x, y, yerr, soln, mask=None):
             x[mask],
             mod+1,
             label="planet {0} [model under]".format(l),
-            zorder=-10,
+            zorder=5,
         )
     ax.legend(fontsize=10, loc=3)
     ax.set_ylabel("$f_\mathrm{dtr}$")
