@@ -15,14 +15,14 @@ if __name__ == '__main__':
 
     channel = 0
 
-    first_epoch_data = './SPHERE_DC_DATA/raw_data/HIP 27321_DB_H23_2016-11-17_ird_convert_recenter_dc5_128361/'
+    first_epoch_data = '/Users/jmazoyer/Desktop/SPHERE_DC_DATA/HIP 27321_DB_K12_2019-03-10_ird_convert_recenter_dc5_214952/'
 
-    datacube_SPHERE = fits.getdata(first_epoch_data + "ird_convert_recenter_dc5-IRD_SCIENCE_REDUCED_MASTER_CUBE-center_im.fits")[channel,:1050,512-100:512+100,512-100:512+100]
+    datacube_SPHERE = fits.getdata(first_epoch_data + "ird_convert_recenter_dc5-IRD_SCIENCE_REDUCED_MASTER_CUBE-center_im.fits")[channel,:,512-100:512+100,512-100:512+100]
 
-    parangs = fits.getdata(first_epoch_data + "ird_convert_recenter_dc5-IRD_SCIENCE_PARA_ROTATION_CUBE-rotnth.fits")[:1050]
+    parangs = fits.getdata(first_epoch_data + "ird_convert_recenter_dc5-IRD_SCIENCE_PARA_ROTATION_CUBE-rotnth.fits")[:]
 
-    datacube_SPHERE_binned = useful.binning_datacube(datacube_SPHERE, sizebin = 10)
-    parangs_binned = useful.binning_parangs(parangs, sizebin = 10)
+    datacube_SPHERE_binned = useful.binning_datacube(datacube_SPHERE, sizebin = 8)
+    parangs_binned = useful.binning_parangs(parangs, sizebin = 8)
 
     # print(datacube_SPHERE_binned.shape)
     # print(parangs_binned.shape)
@@ -40,19 +40,19 @@ if __name__ == '__main__':
     # parangs_binned = np.delete(parangs_binned, frame_removed,
     #                                          0)
 
-    unsaturatedpsf = fits.getdata(first_epoch_data + "ird_convert_recenter_dc5-IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits")[channel,0,:,:]
+    # unsaturatedpsf = fits.getdata(first_epoch_data + "ird_convert_recenter_dc5-IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits")[channel,0,:,:]
     size_datacube = datacube_SPHERE_binned.shape
     centers_images = np.zeros((size_datacube[0],2)) + 100
 
     fits.writeto(first_epoch_data + "centers_images.fits",centers_images, overwrite=True)
     fits.writeto(first_epoch_data + "datacube_SPHERE_binned_centered.fits",datacube_SPHERE_binned, overwrite=True)
     fits.writeto(first_epoch_data + "parangs_binned.fits",parangs_binned, overwrite=True)
-    fits.writeto(first_epoch_data + "unsaturated_psf.fits",unsaturatedpsf, overwrite=True)
+    # fits.writeto(first_epoch_data + "unsaturated_psf.fits",unsaturatedpsf, overwrite=True)
 
     centers_images = fits.getdata(first_epoch_data + "centers_images.fits")
     datacube_SPHERE_binned = fits.getdata(first_epoch_data + "datacube_SPHERE_binned_centered.fits")
     parangs_binned = fits.getdata(first_epoch_data + "parangs_binned.fits")
-    unsaturatedpsf = fits.getdata(first_epoch_data + "unsaturated_psf.fits")
+    # unsaturatedpsf = fits.getdata(first_epoch_data + "unsaturated_psf.fits")
 
     # PCA_components = [30]
     # reduc_pca = useful.simple_pca_already_centered(datacube_SPHERE_binned, centers_images, parangs_binned, PCA_components, "/Users/jmazoyer/Desktop/toto/")
@@ -61,7 +61,7 @@ if __name__ == '__main__':
                                                centers_images, 
                                                parangs_binned,
                                                [30],
-                                               "/Users/jmazoyer/Desktop/toto/")
+                                               first_epoch_data)
 
 
     # Simple rotation
