@@ -280,17 +280,17 @@ def plot_best_fit(x, y, yerr, soln, mask=None):
         color="k",
         alpha=0.4,
         label="data",
-        zorder=42,
+        zorder=3,
     )
     mod = np.zeros(len(soln["transit_pred"][:, 0]))
     for i, l in enumerate(planets_str):
         mod += soln["transit_pred"][:, i]
     gp_mod = soln["gp_pred"] + soln["mean"]
     ax.plot(
-        x[mask], gp_mod+1+mod, color="red", label="best fit transit model", zorder=45, lw=1
+        x[mask], gp_mod+1+mod, color="red", label="best fit transit model", zorder=4, lw=1
     )
     ax.plot(
-        x[mask], gp_mod+1,'--', color="C2", label="without transit", zorder=41, lw=1
+        x[mask], gp_mod+1,'--', color="C2", label="without transit", zorder=5, lw=1
     )
     ax.legend(fontsize=10)
     ax.set_ylabel("Relative flux")
