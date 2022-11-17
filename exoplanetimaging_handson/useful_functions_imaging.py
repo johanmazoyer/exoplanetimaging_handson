@@ -1,15 +1,17 @@
 import os
 
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib import colors
+# import matplotlib.pyplot as plt
+# from matplotlib import colors
 
+import xarray as xr
 import csv
+import plotly.express as px
 
 import astropy.io.fits as fits
 import astropy.units as u, astropy.constants as consts
 
-from ipywidgets import interact
+# from ipywidgets import interact
 
 import scipy.ndimage as ndimage
 import scipy.optimize as opt
@@ -49,54 +51,89 @@ def binning_parangs(init_parangs, sizebin=20):
 ###### Plotting Functions
 ######################################################
 
+def quick_heat_map(datacube, range_color = [0,500], title = "", legend_slicers = "animation_frame"):
+    
+    if len(datacube.shape) == 3:
 
-def show_plane(ax, plane, cmap="gray", title=None, vmin=None, vmax=None):
-    if vmin is None:
-        vmin = np.nanmin(plane)
-    if vmax is None:
-        vmin = np.nanmax(plane)
-
-    plt.pcolor(plane, cmap='plasma', vmin=vmin, vmax=vmax)
-    ax.imshow(plane)
-    ax.axis("off")
-
-    if title:
-        ax.set_title(title, fontsize=18)
+        toto = xr.DataArray(
+            data=datacube,
+            dims=[legend_slicers, "x", "y"])
 
 
-def explore_slices(data, cmap="gray", vmin=None, vmax=None, title=''):
+        fig = px.imshow(toto, 
+                        range_color = range_color, 
+                        title = title,
+                        animation_frame = legend_slicers,
+                        width = 500,
+                        aspect = 'equal',
+                        origin = 'lower')
+   
+    elif len(datacube.shape) == 2:
+        toto = xr.DataArray(
+            data=datacube,
+            dims=["x", "y"])
 
-    N = len(data)
 
-    @interact(plane=(0, N - 1))
-    def display_slice(plane=0):
-        fig, ax = plt.subplots(figsize=(8, 8), dpi=80)
+        fig = px.imshow(toto, 
+                        range_color = range_color, 
+                        title = title,
+                        width = 500,
+                        aspect = 'equal',
+                        origin = 'lower')
+    
+    else:
+        return
+        
+    fig.show()
 
-        show_plane(ax, data[plane], title=title + f' number {plane}', cmap=cmap, vmin=vmin, vmax=vmax)
 
-        plt.show()
+# def show_plane(ax, plane, cmap="gray", title=None, vmin=None, vmax=None):
+#     if vmin is None:
+#         vmin = np.nanmin(plane)
+#     if vmax is None:
+#         vmin = np.nanmax(plane)
 
-    return display_slice
+#     plt.pcolor(plane, cmap='plasma', vmin=vmin, vmax=vmax)
+#     ax.imshow(plane)
+#     ax.axis("off")
+
+#     if title:
+#         ax.set_title(title, fontsize=18)
 
 
-def show_psf(PSF, vmin=None, vmax=None, title=None):
-    # PSF = remove_mean_2d(PSF)
-    if vmin is None:
-        vmin = np.nanmin(PSF)
-    if vmax is None:
-        vmin = np.nanmax(PSF)
+# def explore_slices(data, cmap="gray", vmin=None, vmax=None, title=''):
 
-    fig = plt.figure(figsize=(8, 8), dpi=80)
-    ax = fig.add_subplot(111)
-    plt.axis('off')
-    ax.set_aspect('equal', adjustable='box')
+#     N = len(data)
 
-    plt.pcolor(PSF, cmap='plasma', vmin=vmin, vmax=vmax)
-    if title:
-        ax.set_title(title, fontsize=18)
+#     @interact(plane=(0, N - 1))
+#     def display_slice(plane=0):
+#         fig, ax = plt.subplots(figsize=(8, 8), dpi=80)
 
-    plt.show()
-    plt.close()
+#         show_plane(ax, data[plane], title=title + f' number {plane}', cmap=cmap, vmin=vmin, vmax=vmax)
+
+#         plt.show()
+
+#     return display_slice
+
+
+# def show_psf(PSF, vmin=None, vmax=None, title=None):
+#     # PSF = remove_mean_2d(PSF)
+#     if vmin is None:
+#         vmin = np.nanmin(PSF)
+#     if vmax is None:
+#         vmin = np.nanmax(PSF)
+
+#     fig = plt.figure(figsize=(8, 8), dpi=80)
+#     ax = fig.add_subplot(111)
+#     plt.axis('off')
+#     ax.set_aspect('equal', adjustable='box')
+
+#     plt.pcolor(PSF, cmap='plasma', vmin=vmin, vmax=vmax)
+#     if title:
+#         ax.set_title(title, fontsize=18)
+
+#     plt.show()
+#     plt.close()
 
 
 def remove_mean_2d(image):
@@ -169,7 +206,7 @@ def simple_pca_already_centered(datacube_SPHERE_binned,
                               verbose=False)
 
     print("end PCA")
-    reduc_PCA = np.flip(fits.getdata(os.path.join(output_dir, output_prefix + "reduc_PCA-KLmodes-all.fits")), axis=1)
+    reduc_PCA = fits.getdata(os.path.join(output_dir, output_prefix + "reduc_PCA-KLmodes-all.fits"))
 
     return reduc_PCA
 
