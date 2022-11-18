@@ -51,11 +51,12 @@ def binning_parangs(init_parangs, sizebin=20):
 ###### Plotting Functions
 ######################################################
 
-def quick_heat_map(datacube, range_color = [0,500], title = "", legend_slicers = "animation_frame"):
+def quick_heat_map(datacube, range_color = [0,500], title = "", legend_slicers = "animation_frame", coords= None):
     
     if len(datacube.shape) == 3:
 
         toto = xr.DataArray(
+            coords=coords,
             data=datacube,
             dims=[legend_slicers, "x", "y"])
 
