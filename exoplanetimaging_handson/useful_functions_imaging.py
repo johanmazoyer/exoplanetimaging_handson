@@ -51,40 +51,29 @@ def binning_parangs(init_parangs, sizebin=20):
 ###### Plotting Functions
 ######################################################
 
-def quick_heat_map(datacube, range_color = [0,500], title = "", legend_slicers = "animation_frame", coords= None):
-    
+
+def quick_heat_map(datacube, range_color=[0, 500], title="", legend_slicers="animation_frame", coords=None):
+
     if len(datacube.shape) == 3:
 
-        toto = xr.DataArray(
-            coords=coords,
-            data=datacube,
-            dims=[legend_slicers, "x", "y"])
+        toto = xr.DataArray(coords=coords, data=datacube, dims=[legend_slicers, "x", "y"])
 
+        fig = px.imshow(toto,
+                        range_color=range_color,
+                        title=title,
+                        animation_frame=legend_slicers,
+                        width=500,
+                        aspect='equal',
+                        origin='lower')
 
-        fig = px.imshow(toto, 
-                        range_color = range_color, 
-                        title = title,
-                        animation_frame = legend_slicers,
-                        width = 500,
-                        aspect = 'equal',
-                        origin = 'lower')
-   
     elif len(datacube.shape) == 2:
-        toto = xr.DataArray(
-            data=datacube,
-            dims=["x", "y"])
+        toto = xr.DataArray(data=datacube, dims=["x", "y"])
 
+        fig = px.imshow(toto, range_color=range_color, title=title, width=500, aspect='equal', origin='lower')
 
-        fig = px.imshow(toto, 
-                        range_color = range_color, 
-                        title = title,
-                        width = 500,
-                        aspect = 'equal',
-                        origin = 'lower')
-    
     else:
         return
-        
+
     fig.show()
 
 
@@ -101,7 +90,6 @@ def quick_heat_map(datacube, range_color = [0,500], title = "", legend_slicers =
 #     if title:
 #         ax.set_title(title, fontsize=18)
 
-
 # def explore_slices(data, cmap="gray", vmin=None, vmax=None, title=''):
 
 #     N = len(data)
@@ -115,7 +103,6 @@ def quick_heat_map(datacube, range_color = [0,500], title = "", legend_slicers =
 #         plt.show()
 
 #     return display_slice
-
 
 # def show_psf(PSF, vmin=None, vmax=None, title=None):
 #     # PSF = remove_mean_2d(PSF)
@@ -138,7 +125,8 @@ def quick_heat_map(datacube, range_color = [0,500], title = "", legend_slicers =
 
 
 def remove_mean_2d(image):
-    return image-np.nanmean(image)
+    return image - np.nanmean(image)
+
 
 def quick_crop(image, dimout):
     """ --------------------------------------------------
