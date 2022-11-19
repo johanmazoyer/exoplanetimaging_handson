@@ -52,7 +52,7 @@ def binning_parangs(init_parangs, sizebin=20):
 ######################################################
 
 
-def quick_heat_map(datacube, range_color=[0, 500], title="",coords_3D=None):
+def quick_heat_map(datacube, range_color=[0, 500], title="",coords_3D=None, reverse_y_ra = False):
 
     if len(datacube.shape) == 3:
 
@@ -83,6 +83,10 @@ def quick_heat_map(datacube, range_color=[0, 500], title="",coords_3D=None):
 
     else:
         return
+    
+    if reverse_y_ra:
+        fig['layout']['xaxis']['autorange'] = "reversed"
+
 
     fig.show()
 
