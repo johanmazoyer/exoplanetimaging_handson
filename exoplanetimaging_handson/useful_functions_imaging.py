@@ -52,7 +52,7 @@ def binning_parangs(init_parangs, sizebin=20):
 ######################################################
 
 
-def quick_heat_map(datacube, range_color=[0, 500], title="",coords_3D=None, reverse_y_ra = False):
+def quick_heat_map(datacube, range_color=[0, 500], title="",coords_3D=None, reverse_x_ra = False):
 
     if len(datacube.shape) == 3:
 
@@ -66,7 +66,7 @@ def quick_heat_map(datacube, range_color=[0, 500], title="",coords_3D=None, reve
                 continue
             legend_slicers = key
 
-        toto = xr.DataArray(coords=coords_3D, data=datacube, dims=[legend_slicers, x_name, y_name])
+        toto = xr.DataArray(coords=coords_3D, data=datacube, dims=[legend_slicers,y_name, x_name])
 
         fig = px.imshow(toto,
                         range_color=range_color,
@@ -77,14 +77,14 @@ def quick_heat_map(datacube, range_color=[0, 500], title="",coords_3D=None, reve
                         origin='lower')
 
     elif len(datacube.shape) == 2:
-        toto = xr.DataArray(data=datacube, dims=["x", "y"])
+        toto = xr.DataArray(data=datacube, dims=["y (pix)", "x (pix)"])
 
         fig = px.imshow(toto, range_color=range_color, title=title, width=500, aspect='equal', origin='lower')
 
     else:
         return
     
-    if reverse_y_ra:
+    if reverse_x_ra:
         fig['layout']['xaxis']['autorange'] = "reversed"
 
 
